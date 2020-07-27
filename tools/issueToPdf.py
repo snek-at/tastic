@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 api_url = "https://api.github.com" 
 repos = []
 features = []
-html = ""
+text = ""
 
 # EXECUTION
 #Get all repository names from snek-at organization
@@ -38,13 +38,21 @@ for feature in features:
     with requests.get(feature) as html_req:
         #Parse the html code with BeautifulSoup
         soup = BeautifulSoup(html_req.text, "html.parser")
+        #Get the head of the html code
+        head = soup.findAll("head")[0]
         #Get the class with name edit-comment-hide
         issue = soup.find(class_="edit-comment-hide")
-        #Add the issue to the html text
-        html += str(issue)
+        #Combine the head and the issue
+        html = f"{str(head)}<body>{str(issue)}</body><div style = 'display:block; clear:both; page-break-after:always;'></div>"
+        #Add the html string to the text
+        text += html
 
+#Set options for converting html to pdf
+"""options = {
+    "--header-html": "./header.html"
+}"""
 #Convert the html text to a PDF file
-pdfkit.from_string(html, 'features.pdf')
+pdfkit.from_string(text, 'features.pdf')
 
 """
 SPDX-License-Identifier: (EUPL-1.2)
