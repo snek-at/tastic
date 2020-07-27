@@ -3,8 +3,14 @@ import requests
 import json
 import pdfkit 
 from bs4 import BeautifulSoup
+import os
+from dotenv import load_dotenv
 
 # VARIABLES
+#Environment
+project_folder = os.path.expanduser("./")
+load_dotenv(os.path.join(project_folder, ".env"))
+#Global
 api_url = "https://api.github.com" 
 repos = []
 features = []
@@ -12,7 +18,7 @@ text = ""
 
 # EXECUTION
 #Get all repository names from snek-at organization
-with requests.get(f"{api_url}/users/snek-at/repos") as repo_req:
+with requests.get(f"{api_url}/users/snek-at/repos?access_token={os.getenv('ACCESS_TOKEN')}") as repo_req:
     #Convert html response to json
     repo_json = json.loads(repo_req.text)
 
@@ -22,7 +28,7 @@ with requests.get(f"{api_url}/users/snek-at/repos") as repo_req:
 #Loop through each found repository
 for repo in repos:
     #Get all issues from the repository
-    with requests.get(f"{api_url}/repos/snek-at/{repo}/issues") as issue_req:
+    with requests.get(f"{api_url}/repos/snek-at/{repo}/issues?state=all&access_token={os.getenv('ACCESS_TOKEN')}") as issue_req:
         #Convert html response to json
         issue_json = json.loads(issue_req.text)
 
